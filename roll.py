@@ -25,6 +25,14 @@ def roll_stats_min_mod():
     return sorted(stats, reverse=True)
 
 
+# roll stats and make sure the variance of modifiers is at least 1.5, needs tweaking
+def roll_stats_variance():
+    stats = roll_stats()
+    while std([get_mod(i) for i in stats]) < 1.5:
+        stats = roll_stats()
+    return sorted(stats, reverse=True)
+
+
 # roll stats and make sure the there is at least one <= 8 and one >= 15
 def roll_stats_8_15():
     stats = roll_stats()
