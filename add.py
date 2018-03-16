@@ -50,3 +50,26 @@ def add_racial_modifiers(character):
     # add modifiers that the character gets
     for mod in mods:
         character["stats"][mod] += mods[mod]
+
+
+def add_racial_details(character):
+    # TODO implement
+    pass
+
+
+def add_background_details(character):
+    # TODO implement
+    pass
+
+
+def add_class_details(character):
+    # TODO implement
+    pass
+
+
+# add bonuses and details from race, class, and background
+def add_details(character):
+    add_racial_modifiers(character)
+    add_class_details(character)
+    add_background_details(character)
+    add_racial_details(character)
