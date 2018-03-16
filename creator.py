@@ -2,16 +2,12 @@ import pprint
 import os
 
 import yaml
-
 import numpy.random
 
 import roll as r
 import add as a
 import stats as s
 
-
-
-# TODO add checks for needed files: race, class, background
 
 # import yaml file for race weights
 races = yaml.load(open("Data/races.yaml", "r"))
@@ -86,8 +82,6 @@ def create(stats=None):
     return character
 
 
-# TODO modify to break down into yamls including stats, mods, etc.
-# TODO refactor
 # generates basic yaml files, should only be used for creating all files
 # does not deal with modifiers, proficiencies, or anything above weighting everything the same
 def gen_yamls():
@@ -132,6 +126,7 @@ def gen_yamls():
                 with open(path + "/backgrounds.yaml", "w") as backgrounds:
                     for background in sorted(yaml.load(open("Data/backgrounds.yaml"))):
                         backgrounds.write("\"{}\":\n  weight: 2\n".format(background))
+
 
 # make a "one pass" character, stats are returned as first rolled, no conditions
 def make_character():
