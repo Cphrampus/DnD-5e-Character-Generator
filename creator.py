@@ -126,6 +126,28 @@ def make_character():
     level_character(character, 1)
     return character
 
+
+# create a character where the sum of the modifiers must be at least +5
+def make_character_min_mod():
+    character = create()
+    stats = r.roll_stats_min_mod()
+    print("stats: {}".format(stats))
+    s.assign_stats(character, stats)
+    a.add_details(character)
+    level_character(character, 1)
+    return character
+
+
+# create a character with at least one score above 15 and at least one below 8
+def make_character_8_15():
+    character = create()
+    stats = r.roll_stats_8_15()
+    print("stats: {}".format(stats))
+    s.assign_stats(character, stats)
+    a.add_details(character)
+    level_character(character, 1)
+    return character
+
 # file that gives general leveling info
 # right now just xp
 levels = yaml.load(open("Data/level.yaml"))
@@ -136,7 +158,6 @@ def level_character(character, level):
     character["level"] = level
     character["xp"] = levels[level]["exp"]
     character["proficiency bonus"] = levels[level]["proficiency_bonus"]
-    # TODO add conditionals/extra functions for leveling specific classes/races
 
 # TODO add rest of data to character
 
