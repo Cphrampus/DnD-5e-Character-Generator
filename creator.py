@@ -2,11 +2,14 @@ import pprint
 import os
 
 import yaml
+
 import numpy.random
 
 import roll as r
 import add as a
 import stats as s
+
+
 
 
 
@@ -142,6 +145,31 @@ def make_character_min_mod():
 def make_character_8_15():
     character = create()
     stats = r.roll_stats_8_15()
+    print("stats: {}".format(stats))
+    s.assign_stats(character, stats)
+    a.add_details(character)
+    level_character(character, 1)
+    return character
+
+
+# create a character using the standard array
+def make_character_standard_array():
+    make_character_array([15, 14, 13, 12, 10, 8])
+
+
+# create a character using the high low standard array
+def make_character_standard_array_high_low():
+    make_character_array([15, 8] * 3)
+
+
+# create a character using the all mid standard array
+def make_character_standard_array_mid():
+    make_character_array([13, 12] * 3)
+
+
+# make a character given already present stats
+def make_character_array(stats):
+    character = create()
     print("stats: {}".format(stats))
     s.assign_stats(character, stats)
     a.add_details(character)
