@@ -105,3 +105,9 @@ ENV/
 
 # Generated Data and Data files
 Data/
+
+# character save file
+characters.json
+
+# Dev notes
+notes
