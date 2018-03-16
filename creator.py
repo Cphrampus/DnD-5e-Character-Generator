@@ -1,9 +1,16 @@
+import pprint
 import os
 
 import yaml
 import numpy.random
 
+import roll as r
+import add as a
+import stats as s
 
+
+
+# TODO add checks for needed files: race, class, background
 
 # import yaml file for race weights
 races = yaml.load(open("Data/races.yaml", "r"))
@@ -107,3 +114,46 @@ def gen_yamls():
                 with open(path + "/backgrounds.yaml", "w") as backgrounds:
                     for background in sorted(yaml.load(open("Data/backgrounds.yaml"))):
                         backgrounds.write("\"{}\":\n  weight: 2\n".format(background))
+
+
+# make a "one pass" character, stats are returned as first rolled, no conditions
+def make_character():
+    character = create()
+    stats = sorted(r.roll_stats(), reverse=True)
+    print("stats: {}".format(stats))
+    s.assign_stats(character, stats)
+    a.add_details(character)
+    level_character(character, 1)
+    return character
+
+# file that gives general leveling info
+# right now just xp
+levels = yaml.load(open("Data/level.yaml"))
+
+
+# set level, xp, and proficiency bonus
+def level_character(character, level):
+    character["level"] = level
+    character["xp"] = levels[level]["exp"]
+    character["proficiency bonus"] = levels[level]["proficiency_bonus"]
+    # TODO add conditionals/extra functions for leveling specific classes/races
+
+# TODO add rest of data to character
+
+# generate yaml files if they don't exist
+if not os.path.exists("Data/Gen"):
+    print("Generating yaml files")
+    gen_yamls()
+
+character = make_character()
+
+pprint.pprint(character)
+
+
+# give user the option to save the character for later
+keep = input("Keep character? ")
+
+if keep in ("yes", "Yes", "Y", "y"):
+    # add character and rewrite file
+    with open("characters.json", "a") as characters_file:
+        characters_file.write(str(character)+"\n")
