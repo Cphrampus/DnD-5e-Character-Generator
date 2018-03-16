@@ -23,3 +23,11 @@ def roll_stats_min_mod():
     while sum([get_mod(i) for i in stats]) < 5:
         stats = roll_stats()
     return sorted(stats, reverse=True)
+
+
+# roll stats and make sure the there is at least one <= 8 and one >= 15
+def roll_stats_8_15():
+    stats = roll_stats()
+    while [i for i in stats if i >= 15].__len__() < 1 or [i for i in stats if i <= 8].__len__() < 1:
+        stats = roll_stats()
+    return sorted(stats, reverse=True)
