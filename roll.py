@@ -1,6 +1,8 @@
 from heapq import nlargest
+
 from numpy import std
 import numpy.random
+
 
 
 # roll 4 6-sided dice and keep the highest three
@@ -16,6 +18,15 @@ def roll_stats():
 # returns the modifier given a score, ranges from -5 for 1 and +5 for 20
 def get_mod(score):
     return (score - 10) // 2
+
+
+# roll stats the "colville" way, in order and with at least 2 scores that are 15+
+def roll_stats_coville():
+    stats = roll_stats()
+    while [i for i in stats if i >= 15].__len__() < 2:
+        stats = roll_stats()
+    return stats
+
 
 # roll stats and make sure the the sum of the mods is at least 5, the sum of the standard array
 def roll_stats_min_mod():

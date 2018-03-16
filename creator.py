@@ -11,8 +11,6 @@ import stats as s
 
 
 
-
-
 # TODO add checks for needed files: race, class, background
 
 # import yaml file for race weights
@@ -28,7 +26,7 @@ def random_from(items):
     return numpy.random.choice(values, p=probs)
 
 
-def create():
+def create(stats=None):
     # create an array of values to keep track of choices
     attr = []
 
@@ -53,7 +51,24 @@ def create():
     # not all races have subraces
     character["subrace"] = subrace if subrace != "" else None
 
-    cl = random_from(yaml.load(open("Data/Gen/{}/{}/classes.yaml".format(*attr))))
+    # choose a random class for race/subrace choices if we aren't making a colville character
+    if stats is None:
+        cl = random_from(yaml.load(open("Data/Gen/{}/{}/classes.yaml".format(*attr))))
+
+    # colville method
+    else:
+        # stats were rolled in order
+        character["stats"] = dict(zip(["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"],
+                                      stats))
+
+        # print out what we are working with
+        print("stats: ", dict(character["stats"]))
+
+        # add racial modifiers
+        a.add_details(character)
+
+        # determine class from new scores
+        cl = s.get_class(character)
 
     # save class choice
     attr += [cl]
@@ -83,12 +98,12 @@ def gen_yamls():
     # make a folder for each race
     for race in sorted(races):
         path = basepath
-        os.makedirs(path+race, 0o700, True)
+        os.makedirs(path + race, 0o700, True)
         path += race
 
         subracePath = path
         # make a list of subraces for each race
-        with open(path+"/subraces.yaml", "w") as subraces_file:
+        with open(path + "/subraces.yaml", "w") as subraces_file:
             subraces = races[race]["subraces"]
             if subraces is None:
                 subraces = [""]
@@ -96,20 +111,20 @@ def gen_yamls():
                 path = subracePath
                 subraces_file.write("\"{}\":\n  weight: 2\n".format(subrace))
                 if subrace:
-                    os.makedirs(path+"/"+subrace, 0o700, True)
-                    path += "/"+subrace
+                    os.makedirs(path + "/" + subrace, 0o700, True)
+                    path += "/" + subrace
 
                 classPath = path
                 # make a list of classes for each subrace
-                with open(path+"/classes.yaml", "w") as classes:
+                with open(path + "/classes.yaml", "w") as classes:
                     path = classPath
                     cl = yaml.load(open("Data/classes.yaml"))
                     for c in sorted(cl):
                         classes.write("\"{}\":\n  weight: 2\n".format(c))
-                        os.makedirs(path+"/"+c, 0o700, True)
+                        os.makedirs(path + "/" + c, 0o700, True)
 
                         # make a list of archetypes for the class
-                        with open(path+"/"+c+"/archetypes.yaml", "w") as archetypes:
+                        with open(path + "/" + c + "/archetypes.yaml", "w") as archetypes:
                             for archetype in sorted(cl[c]["archetypes"]):
                                 archetypes.write("\"{}\":\n  weight: 2\n".format(archetype))
 
@@ -118,7 +133,6 @@ def gen_yamls():
                     for background in sorted(yaml.load(open("Data/backgrounds.yaml"))):
                         backgrounds.write("\"{}\":\n  weight: 2\n".format(background))
 
-
 # make a "one pass" character, stats are returned as first rolled, no conditions
 def make_character():
     character = create()
@@ -126,6 +140,14 @@ def make_character():
     print("stats: {}".format(stats))
     s.assign_stats(character, stats)
     a.add_details(character)
+    level_character(character, 1)
+    return character
+
+
+# make a "colville" character, roll stats in order, apply bonuses, determine class
+def make_character_coville():
+    stats = r.roll_stats_coville()
+    character = create(stats)
     level_character(character, 1)
     return character
 
@@ -205,4 +227,4 @@ keep = input("Keep character? ")
 if keep in ("yes", "Yes", "Y", "y"):
     # add character and rewrite file
     with open("characters.json", "a") as characters_file:
-        characters_file.write(str(character)+"\n")
+        characters_file.write(str(character) + "\n")
